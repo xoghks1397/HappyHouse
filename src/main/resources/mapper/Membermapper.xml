@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.happyhouse.dao.MemberDao">
+	<insert id="add">
+		insert into member (id,pw,email,address) values (#{name},#{password},#{email},#{address})
+	</insert>
+	<select id="search"
+		resultType="com.ssafy.happyhouse.model.MemberDto">
+		select id,email from member
+	</select>
+	<select id="searchById"
+		resultType="com.ssafy.happyhouse.model.MemberDto"
+		parameterType="String">
+		select * from member where id=#{name}
+	</select>
+	<select id="searchPass"
+		resultType="com.ssafy.happyhouse.model.MemberDto">
+		select * from member where id=#{id} and email=#{email}
+	</select>
+	<update id="update">
+		update member set email=#{email}, pw=#{password}, address = #{address} where id = #{name}
+	</update>
+	<delete id="delete">
+		delete from member where id=#{id}
+	</delete>
+	<select id="searchMember" resultType="com.ssafy.happyhouse.model.MemberDto">
+		select * from member;
+	</select>
+</mapper>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.happyhouse.dao.HouseDealDao">
+	<select id="searchByDong"
+		resultType="com.ssafy.happyhouse.model.HouseDealDto">
+		select no, city, gugun, dong, aptName, dealAmount,
+		buildYear, dealYear,
+		dealMonth, dealDay, area, floor, jibun,type,
+		rentMoney
+		from housedeal h inner join dongcode d on h.code = d.dongcode
+		where d.dong like concat('%',#{searchWord},'%')
+	</select>
+	<select id="searchByName"
+		resultType="com.ssafy.happyhouse.model.HouseDealDto">
+		select no, city, gugun, dong, aptName, dealAmount,
+		buildYear, dealYear, dealMonth, dealDay, area, floor, jibun,type,
+		rentMoney
+		from housedeal h inner join dongcode d
+		on h.code = d.dongcode
+		where aptName like concat('%',#{searchWord},'%')
+	</select>
+	<select id="searchByInfo"
+		resultType="com.ssafy.happyhouse.model.HouseDealDetailDto">
+		select no, city, gugun, dong, a.aptName,  a.jibun, dealAmount,
+		a.buildYear, dealYear, dealMonth, lat, lng, area, floor,type,
+		rentMoney
+		from ( select *
+		from housedeal h inner join dongcode
+		d
+		on h.code = d.dongcode
+		where h.no = #{no}) a
+		inner join houseinfo b
+		on
+		a.aptName = b.aptName and a.code = b.dongcode and a.jibun = b.jibun
+	</select>
+		<!-- 총 게시글 갯수 출력 -->
+	<select id="countBoardDong" parameterType="HashMap" resultType="int">
+		select count(*) 
+		from housedeal h
+		join dongcode d on h.code = d.dongcode
+		where dong like concat('%',#{searchWord},'%')
+	</select>
+	<select id="countBoardAptName" parameterType="HashMap" resultType="int">
+		select count(*) 
+		from housedeal h
+		join dongcode d on h.code = d.dongcode
+		where AptName like concat('%',#{searchWord},'%')
+	</select>
+	
+	<!-- 페이징 처리 후 게시글 조회 -->
+	<select id="selectBoard" resultType="com.ssafy.happyhouse.model.HouseDealDto">
+		select no, city, gugun, dong, aptName, dealAmount,
+		buildYear, dealYear, dealMonth, dealDay, area, floor, jibun,type,
+		rentMoney
+		from housedeal h inner join dongcode d
+		on h.code = d.dongcode
+		where no between ${start} AND ${end};
+	</select>
+	
+	<insert id="countPop">
+	INSERT INTO popular (dong, count) VALUES(#{dong}, 1) 
+	ON DUPLICATE KEY UPDATE count = count+1;
+	</insert>
+	
+	<select id="getPopular" resultType="String">
+		select dong 
+		from popular
+		order by count desc
+		limit 6;
+	</select>
+</mapper>
